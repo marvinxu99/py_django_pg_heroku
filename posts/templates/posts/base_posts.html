@@ -1,4 +1,11 @@
 {% extends 'base_no_crumb.html' %}
 {% block title %}Insta Posts{% endblock %}
 {% block content %}
+    <div class="mt-5 mb-5">
+        <a href="{% url 'posts:home' %}" class="btn btn-lg btn-outline-primary" role="button">All Posts</a>
+        <a href="{% url 'posts:add_post' %}" class="btn btn-lg btn-outline-primary" role="button">Create New Post</a>
+        <a href="{% url 'posts:responsive_cards' %}" class="btn btn-lg btn-outline-primary" role="button">Responsive Cards</a>
+    </div>
+    {% block subcontent %}
+    {% endblock %}
 {% endblock %}

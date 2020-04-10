@@ -1,0 +1,30 @@
+{% extends 'posts/base_posts.html' %}
+{% block title %}Home - Insta Posts{% endblock %}
+{% block subcontent %}
+<div>
+  <div class="container">
+    <div class="row">
+    {% for post in object_list %}
+      <div class="col-md-6 col-lg-4 col-xl-3 py-2">
+        <div class='card h-100'>
+          <div class="card-header">{{ post.title }}</div>
+          <div class='card-body'>
+            <div class="embed-responsive embed-responsive-16by9">
+              <img alt="{{ post.title }}" class="card-img-top embed-responsive-item" src="{{ post.cover.url}}" />
+            </div>
+          </div>
+          <div class="card-footer">
+            <button type="button" class="btn btn-sm btn-outline-primary" 
+            data-toggle="modal" data-target="#exampleModal"
+            data-whatever="test"
+            >
+            View Details
+            </button>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+    <div>
+  </div>
+</div>
+{% endblock %}
