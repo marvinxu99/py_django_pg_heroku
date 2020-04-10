@@ -30,11 +30,10 @@ SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
-DOMAIN = config('DOMAIN', default='PROD')
+DOMAIN = config('DOMAIN', default='DEV')
 
-
-ALLOWED_HOSTS = ['winn.herokuapp.com', '127.0.0.1']
-#ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+#ALLOWED_HOSTS = ['winn.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
 
 # Application definition
@@ -53,8 +52,9 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'boards.apps.BoardsConfig',
     'catalog.apps.CatalogConfig',
-    'core',
-    'kbase',
+    'core.apps.CoreConfig',
+    'kbase.apps.KbaseConfig',
+    'posts.apps.PostsConfig',
 
     'widget_tweaks',
 ]
@@ -126,7 +126,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         # 'NAME': 'winndb_poll_dev',
-        'NAME': 'winn_users5',
+        'NAME': 'winn_users6',
         'USER': 'winter',
         'PASSWORD': 'winter',
         'HOST': 'localhost',
