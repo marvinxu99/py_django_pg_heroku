@@ -3,6 +3,7 @@ from django.views.generic import ListView, CreateView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 
 from .forms import PostForm
@@ -14,7 +15,7 @@ class AllPostsListView(ListView):
     template_name = 'posts/all_posts.html'
     paginate_by = 4
 
-class AllPostsByUserListView(ListView):
+class AllPostsByUserListView(LoginRequiredMixin, ListView):
     """Generic class-based view listing posts created by current user."""
     model = Post
     template_name = 'posts/all_posts.html'
@@ -24,11 +25,6 @@ class AllPostsByUserListView(ListView):
         return Post.objects.filter(created_by=self.request.user).order_by('created_at')
 
 
-# class CreatePostView(LoginRequiredMixin, CreateView):
-#     model = Post
-#     form_class = PostForm
-#     template_name = 'posts/create_post.html'
-#     success_url = reverse_lazy('posts:all_posts')
 @login_required()
 def create_post(request):
     if request.method == 'POST':
