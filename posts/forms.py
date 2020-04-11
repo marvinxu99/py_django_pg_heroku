@@ -15,7 +15,10 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'cover']
-        # widgets = {
-        #     'title': forms.TextInput(attrs={ "size":40 })
-        # }
 
+    def clean_image(self):
+        image = self.cleaned_data.get['image']
+        if image:
+            # do some validation, if it fails
+            raise forms.ValidationError(u'Form error')
+        return image
