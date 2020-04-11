@@ -18,6 +18,7 @@ from django.urls import path, include, re_path
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.static import serve as serve_media
 
 from core import views as core_views
 
@@ -37,10 +38,9 @@ urlpatterns = [
     path('winter_winnpy/', core_views.winter_winnpy, name='winter_winnpy'),
     path('winter_univer/', core_views.winter_univer, name='winter_univer'),
     path('face_recognition/', core_views.face_recognition, name='face_recognition'),
-
 ]
 
 urlpatterns += staticfiles_urlpatterns()
 
-#if settings.DEBUG: 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG: 
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

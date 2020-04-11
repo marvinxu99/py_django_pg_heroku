@@ -10,13 +10,16 @@
           <div class="card-header">{{ post.title }}</div>
           <div class='card-body'>
             <div class="embed-responsive embed-responsive-16by9">
+              <!--
               <img alt="{{ post.title }}" class="card-img-top embed-responsive-item" src="{{ post.cover.url}}" />
+              -->
+              <img alt="{{ post.title }}" class="card-img-top embed-responsive-item" src="//placehold.it/500x280" />
             </div>
           </div>
           <div class="card-footer">
             <button type="button" class="btn btn-sm btn-outline-primary" 
               data-toggle="modal" data-target="#viewDetailsModal"
-              data-whatever="{{ post.cover.url}}"
+              data-whatever="//placehold.it/500x280"
             >
               View Details
             </button>

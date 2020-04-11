@@ -12,7 +12,6 @@
       {% for post in object_list %}
       <div class="carousel-item {% if forloop.first %} active {% endif %}">
         <img class="d-block w-100" src="{{ post.cover.url}}" alt="{{ post.title }}">
-        <img class="d-block w-100" src="//placehold.it/500x280" alt="{{ post.title }}">
         <div class="carousel-caption">
           <p class='text-dark h3'>{{ post.title }}</h5>
           <p class='text-dark h5'>details</p>
