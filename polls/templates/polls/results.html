@@ -15,8 +15,8 @@
         <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
         {% endfor %}
     </ul>
-    <a href="{% url 'polls:detail' question.question_id %}">Vote again?</a><br>
-    <a href="{% url 'polls:question' %}">Back to questions</a>
+    <a href="{% url 'polls:detail' question.question_id %}" class="btn-sm btn-primary" role="button">Vote again?</a>
+    <a href="{% url 'polls:question' %}" class="btn-sm btn-secondary" role="button">Back to questions</a>
   </div>
 </div>
 
@@ -38,7 +38,8 @@
     </div>
     {% endfor %}    
     <br />
-    <a href="{% url 'polls:detail' question.question_id %}">Vote again?</a><br>
+    <a href="{% url 'polls:detail' question.question_id %}" class="btn-sm btn-primary" role="button">Vote again?</a>
+    <a href="{% url 'polls:question' %}" class="btn-sm btn-secondary" role="button">Back to questions</a>
   </div>
 </div>
 
