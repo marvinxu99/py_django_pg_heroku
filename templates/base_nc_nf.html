@@ -29,7 +29,7 @@
           <div class="collapse navbar-collapse" id="WinnMenu">
             <ul class="navbar-nav ml-auto">
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="eventsMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="eventsMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Events
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="eventsMenu">
@@ -37,16 +37,16 @@
                 </div>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="aboutMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="aboutMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   About Us
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="aboutMenu">
                   <a class="dropdown-item" href="{% url 'polls:about' %}" >About Us</a>
-                  <a class="dropdown-item" href="{% url 'polls:contact' %}" >Contact</a>                  
+                  <a class="dropdown-item" href="{% url 'polls:contact' %}" >Contact us</a>                  
                 </div>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="utilMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="utilMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Tools
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="utilMenu">
@@ -81,52 +81,16 @@
               </ul>
             {% else %}
               <form class="form-inline ml-auto">
-                <a href="{% url 'accounts:login' %}" class="btn btn-primary ml-2">Log in</a>
-                <a href="{% url 'accounts:signup' %}" class="btn btn-primary ml-2">Sign up</a>
+                <a href="{% url 'accounts:login' %}" class="btn btn-primary ml-2 text-white">Log in</a>
+                <a href="{% url 'accounts:signup' %}" class="btn btn-primary ml-2 text-white">Sign up</a>
               </form>
             {% endif %}    
           </div>
         </div>
       </nav>
       <div class="container">
-        <ol class="breadcrumb my-4">
-            {% block breadcrumb %}
-            {% endblock %}
-        </ol>  
         {% block content %}
         {% endblock %}
-        <footer class="pt-4 my-md-5 pt-md-5 border-top">
-          <div class="row">
-            <div class="col-12 col-md">
-              <img class="mb-2" src="{% static 'img/winter-logo-sm.png' %}" width="64" height="64">
-              <small class="d-block mb-3 text-muted">© Winter Winn 2019-2020</small>
-            </div>
-            <div class="col-6 col-md">
-              <h5>What's new</h5>
-              <ul class="list-unstyled text-small">
-                <li><a class="text-muted" href="{% url 'kbase:winn-jumps' %}" target="_blank">Winter jumps</a></li>
-                <li><a class="text-muted" href="#">Winter barks</a></li>
-                <li><a class="text-muted" href="#">Winter whines</a></li>
-              </ul>
-            </div>
-            <div class="col-6 col-md">
-              <h5>Education</h5>
-              <ul class="list-unstyled text-small">
-                <li><a class="text-muted" href="#">Resource</a></li>
-                <li><a class="text-muted" href="#">Articles</a></li>
-                <li><a class="text-muted" href="#">Blogs</a></li>
-              </ul>
-            </div>
-            <div class="col-6 col-md">
-              <h5>Company</h5>
-              <ul class="list-unstyled text-small text-muted">
-                <li><a class="text-muted" href="#">Careers</a></li>
-                <li><a class="text-muted" href="#">About us</a></li>
-                <li><a class="text-muted" href="#">Privacy at Winter Winn</a></li>
-              </ul>
-            </div>
-          </div>
-        </footer>
       </div>
     {% endblock body %}
     <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>

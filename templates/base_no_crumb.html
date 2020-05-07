@@ -23,13 +23,21 @@
             <span class="navbar-toggler-icon"></span>
           </button>
           <form class="form-inline my-2 my-lg-0" action="{% url 'core:search' %}" method='GET'>
-            <input class="form-control mr-sm-2" name="search" type="search" placeholder="Search" aria-label="Search">
+            <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-success my-2 my-sm-0 text-white" type="submit">Search</button>
           </form>
           <div class="collapse navbar-collapse" id="WinnMenu">
             <ul class="navbar-nav ml-auto">
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="aboutMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="eventsMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Events
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="eventsMenu">
+                  <a class="dropdown-item" href="{% url 'utils:calendar' %}" >Calendar</a>
+                </div>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="aboutMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   About Us
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="aboutMenu">
@@ -38,7 +46,7 @@
                 </div>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="utilMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="utilMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Tools
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="utilMenu">
@@ -73,8 +81,8 @@
               </ul>
             {% else %}
               <form class="form-inline ml-auto">
-                <a href="{% url 'accounts:login' %}" class="btn btn-primary ml-2">Log in</a>
-                <a href="{% url 'accounts:signup' %}" class="btn btn-primary ml-2">Sign up</a>
+                <a href="{% url 'accounts:login' %}" class="btn btn-primary ml-2 text-white">Log in</a>
+                <a href="{% url 'accounts:signup' %}" class="btn btn-primary ml-2 text-white">Sign up</a>
               </form>
             {% endif %}    
           </div>
@@ -82,7 +90,6 @@
       </nav>
       <div class="container">
         {% block content %}
-        this
         {% endblock %}
         <footer class="pt-4 my-md-5 pt-md-5 border-top">
           <div class="row">
