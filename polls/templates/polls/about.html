@@ -1,8 +1,12 @@
 {% extends "polls/base_polls.html" %}
 {% block title %}About us{% endblock %}
-
+{% load static %}
 {% block breadcrumb %}About Us{% endblock %}
 
 {% block content %}
-<p>About page is coming soon.</p>
+<p>About page is coming soon...</p>
+
+Hello, there: <br />
+I am Winter. Nice to meet you! <br />
+<img src="{% static 'img/winter_logo.png' %}" width="128" height="128" alt="winter">
 {% endblock %}
