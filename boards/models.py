@@ -34,6 +34,9 @@ class Topic(models.Model):
     def __str__(self):
         return self.subject
 
+    def has_no_posts(self):
+        return self.posts.count() <= 0
+
     def get_page_count(self):
         count = self.posts.count()
         pages = count / 20

@@ -81,6 +81,7 @@ def new_topic(request, board_pk):
     
     if request.method == 'POST':
         form = NewTopicForm(request.POST)
+
         if form.is_valid():            
             topic = form.save(commit=False)
             topic.board = board
@@ -91,7 +92,7 @@ def new_topic(request, board_pk):
                 topic=topic,
                 created_by=request.user
             )
-        return redirect('boards:topic_posts', board_pk=board.pk, topic_pk=topic.pk) 
+            return redirect('boards:topic_posts', board_pk=board.pk, topic_pk=topic.pk) 
 
     else:
         form = NewTopicForm()
@@ -158,6 +159,15 @@ def reply_topic(request, board_pk, topic_pk):
     posts = topic.get_last_ten_posts()
 
     return render(request, 'boards/reply_topic.html', {'topic': topic, 'posts': posts,'form': form})
+
+
+@login_required
+def delete_topic(request, board_pk, topic_pk):
+    topic = get_object_or_404(Topic, board__pk=board_pk, pk=topic_pk)
+    if topic.starter == request.user and topic.posts.count() <= 0:
+        topic.delete()
+
+    return redirect('boards:board_topics', board_pk=board_pk)
 
 
 @method_decorator(login_required, name='dispatch')
