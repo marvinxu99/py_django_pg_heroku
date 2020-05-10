@@ -140,6 +140,7 @@ def reply_topic(request, board_pk, topic_pk):
             post = form.save(commit=False)
             post.topic = topic
             post.created_by = request.user
+            post.updated_at = timezone.now()
             post.save()
 
             topic.last_updated = timezone.now()
