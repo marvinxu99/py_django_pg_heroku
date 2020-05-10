@@ -130,7 +130,9 @@ class PostListView(ListView):
 
 @login_required
 def reply_topic(request, board_pk, topic_pk):
+    
     topic = get_object_or_404(Topic, board__pk=board_pk, pk=topic_pk)
+
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
@@ -190,6 +192,11 @@ class PostUpdateView(UpdateView):
         post.updated_by = self.request.user
         post.updated_at = timezone.now()
         post.save()
+        
+        topic = get_object_or_404(Topic, pk=post.topic.pk)
+        topic.last_updated = timezone.now()
+        topic.save()
+
         return redirect('boards:topic_posts', board_pk=post.topic.board.pk, topic_pk=post.topic.pk)
 
 
@@ -218,6 +225,9 @@ def delete_post(request, board_pk, topic_pk, post_pk):
         pk = post_pk
     )
     if post.created_by == request.user:
+        topic = get_object_or_404(Topic, pk=post.topic.pk)
+        topic.last_updated = timezone.now()
+        topic.save()
         post.delete()
 
     return redirect('boards:topic_posts', board_pk=post.topic.board.pk, topic_pk=post.topic.pk)
