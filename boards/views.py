@@ -124,7 +124,8 @@ class PostListView(ListView):
 
     def get_queryset(self):
         self.topic = get_object_or_404(Topic, board__pk=self.kwargs.get('board_pk'), pk=self.kwargs.get('topic_pk'))
-        queryset = self.topic.posts.order_by('-created_at')
+        #queryset = self.topic.posts.order_by('-created_at')
+        queryset = self.topic.posts.order_by('-updated_at')
         return queryset
 
 
