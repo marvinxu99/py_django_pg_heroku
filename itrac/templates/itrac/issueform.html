@@ -1,0 +1,12 @@
+{% extends "itrac/base_itrac.html" %}
+{% block subcontent %}
+    <h1>Create/Update Issue</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% include 'includes/form.html' %}
+
+        <button class="btn btn-sm btn-secondary" type="submit" name="action" onclick="M.toast({html: 'New Issue Submitted!'})">Save Issue
+                
+              </button>
+    </form>
+{% endblock %}

@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 from django.views.static import serve as serve_media
 
 from core import views as core_views
+import notifications.urls
 
 
 urlpatterns = [
@@ -42,7 +43,9 @@ urlpatterns = [
     path('face_recognition/', core_views.face_recognition, name='face_recognition'),
 
     path('utils/', include('utils.urls')),
-
+    
+    path('itrac/', include('itrac.urls')),
+    path('inbox/notifications/', include(notifications.urls, namespace='notifications')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
