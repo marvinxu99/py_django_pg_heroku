@@ -138,7 +138,7 @@ def get_status_json(request):
     return JsonResponse(chart)
 
 def get_bug_upvotes_json(request):
-    dataset = Issue.objects \
+    dataset = Issue.objects \pi
         .filter(issue_type='BUG') \
         .values('upvotes', 'title') \
         .exclude(upvotes=0) \
