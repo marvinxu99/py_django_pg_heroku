@@ -2,7 +2,7 @@ from django.urls import path
 from .views import get_issues, issue_detail, create_issue, \
     edit_issue, create_or_edit_comment, search, get_issue_type_json, \
     get_status_json, get_bug_upvotes_json, get_feature_upvotes_json, report, \
-    upvote, my_issues, my_notifications, create_or_edit_reply, save_issue, \
+    upvote, my_issues, create_or_edit_reply, save_issue, \
     saved_issues, delete_saved_issue, do_search, do_search_my
 
 app_name = 'itrac'
@@ -10,7 +10,6 @@ app_name = 'itrac'
 urlpatterns = [
     path('my_issues/', my_issues, name='my_issues'),
     path('saved_issues/', saved_issues, name='saved_issues'),
-    path('notifications/', my_notifications, name='my_notifications'),
     path('', get_issues, name='get_issues'),
     path('<int:pk>/', issue_detail, name='issue_detail'),
     path('new/', create_issue, name='new_issue'),

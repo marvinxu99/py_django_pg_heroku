@@ -10,8 +10,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
 from django.db.models import Count, Q
 from django.core import serializers
-from notifications.signals import notify
-from notifications.models import Notification
 
 from .models import Issue, Comment, Reply, SavedIssue
 from .forms import IssueForm, CommentForm, ReplyForm
@@ -100,17 +98,6 @@ def saved_issues(request):
     user = request.user
     savedissues = SavedIssue.objects.filter(user=user).order_by('-created_date')
     return render(request, "itrac/savedissues.html", {'savedissues': savedissues})
-
-
-def my_notifications(request):
-    """
-    Create a view that will return a list
-    of notifications for the user to the 'notifications.html' template
-    """
-
-    user = request.user
-    notifications = Notification.objects.unread().filter(recipient=user).order_by('-timestamp')
-    return render(request, "itrac/notifications.html", {'notifications': notifications})
 
 
 def get_issue_type_json(request):

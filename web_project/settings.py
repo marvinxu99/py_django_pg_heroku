@@ -57,7 +57,6 @@ INSTALLED_APPS = [
     'itrac.apps.iTracConfig',
 
     'widget_tweaks',
-    'notifications',    #  pip install django-notifications-hq
 ]
 
 MIDDLEWARE = [
@@ -126,7 +125,7 @@ DATABASES = {
 
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': 'winndb_poll_dev',
+        # 'NAME': 'winndb_users5',
         'NAME': 'winn_prod',
         'USER': 'winter',
         'PASSWORD': 'winter',

@@ -21,7 +21,6 @@ from django.conf.urls.static import static
 from django.views.static import serve as serve_media
 
 from core import views as core_views
-import notifications.urls
 
 
 urlpatterns = [
@@ -35,17 +34,15 @@ urlpatterns = [
     #path('', RedirectView.as_view(url='catalog/', permanent=True)),
 
     path('core/', include('core.urls')),
+    path('itrac/', include('itrac.urls')),
     path('kbase/', include('kbase.urls')),
     path('posts/', include('posts.urls')),
+    path('utils/', include('utils.urls')),
     
     path('winter_winnpy/', core_views.winter_winnpy, name='winter_winnpy'),
     path('winter_univer/', core_views.winter_univer, name='winter_univer'),
     path('face_recognition/', core_views.face_recognition, name='face_recognition'),
-
-    path('utils/', include('utils.urls')),
     
-    path('itrac/', include('itrac.urls')),
-    path('inbox/notifications/', include(notifications.urls, namespace='notifications')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
