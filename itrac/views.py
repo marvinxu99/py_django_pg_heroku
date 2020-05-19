@@ -1,4 +1,5 @@
 import os
+import requests
 from datetime import datetime, timedelta, time
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.contrib.auth.decorators import login_required
@@ -138,7 +139,7 @@ def get_status_json(request):
     return JsonResponse(chart)
 
 def get_bug_upvotes_json(request):
-    dataset = Issue.objects \pi
+    dataset = Issue.objects \
         .filter(issue_type='BUG') \
         .values('upvotes', 'title') \
         .exclude(upvotes=0) \

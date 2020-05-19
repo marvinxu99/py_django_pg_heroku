@@ -34,7 +34,6 @@ urlpatterns = [
     #path('', RedirectView.as_view(url='catalog/', permanent=True)),
 
     path('core/', include('core.urls')),
-    path('itrac/', include('itrac.urls')),
     path('kbase/', include('kbase.urls')),
     path('posts/', include('posts.urls')),
     path('utils/', include('utils.urls')),
@@ -42,7 +41,9 @@ urlpatterns = [
     path('winter_winnpy/', core_views.winter_winnpy, name='winter_winnpy'),
     path('winter_univer/', core_views.winter_univer, name='winter_univer'),
     path('face_recognition/', core_views.face_recognition, name='face_recognition'),
-    
+
+    path('itrac/', include('itrac.urls')),
+
 ]
 
 urlpatterns += staticfiles_urlpatterns()
