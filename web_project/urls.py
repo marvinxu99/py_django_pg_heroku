@@ -43,7 +43,7 @@ urlpatterns = [
     path('face_recognition/', core_views.face_recognition, name='face_recognition'),
 
     path('itrac/', include('itrac.urls')),
-
+    path('webgl/', include('webgl.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
