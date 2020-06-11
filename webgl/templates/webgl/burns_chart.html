@@ -13,7 +13,9 @@
       <canvas id="canvas" width="500" height="600"></canvas>
       <canvas id="zoom" width="200" height="200"></canvas>
     </div>
-    <input type="checkbox" id='smoothbtn'> Enable image smooting</input>
+    <div hidden>
+      <input type="checkbox" id='smoothbtn'> Enable image smooting</input>
+    </div>
     <div hidden>
       Please pick a colour: 
       <input type="radio" id="red" name="colour" value="red"><label for="red" class="ml-1">Red</label>
@@ -21,19 +23,32 @@
       <input type="radio" id="green" name="colour" value="green"><label for="green" class="ml-1">Green</label>
       <input type="radio" id="black" name="colour" value="black" checked><label for="black" class="ml-1">Black</label>
     </div>
-    <div style="position:absolute;top:12%;left:53%;">Choose Color</div>
-    <div style="position:absolute;top:15%;left:55%;width:10px;height:10px;background:green;" id="green" onclick="colour(this)"></div>
-    <div style="position:absolute;top:15%;left:56%;width:10px;height:10px;background:blue;" id="blue" onclick="colour(this)"></div>
-    <div style="position:absolute;top:15%;left:57%;width:10px;height:10px;background:red;" id="red" onclick="colour(this)"></div>
-    <div style="position:absolute;top:17%;left:55%;width:10px;height:10px;background:yellow;" id="yellow" onclick="colour(this)"></div>
-    <div style="position:absolute;top:17%;left:56%;width:10px;height:10px;background:orange;" id="orange" onclick="colour(this)"></div>
-    <div style="position:absolute;top:17%;left:57%;width:10px;height:10px;background:black;" id="black" onclick="colour(this)"></div>
-    <div style="position:absolute;top:20%;left:53%;">Eraser</div>
-    <div style="position:absolute;top:23%;left:55%;width:15px;height:15px;background:white;border:2px solid;" id="white" onclick="colour(this)"></div>
-    <div>
-      <button onclick="draw(img);">Reset Chart</button>  
-      <button id="clipboard">Copy to Clipboard</button> 
-      <a id="btn-save-image" class="btn btn-sm btn-outline-primary ml-3">Save Image(download)</a>
+    <div style="display:inline-grid; grid-template-columns:auto auto; grid-gap:100px">
+      <div>
+        <div class="mt-3">
+          <button onclick="draw(img);" class="btn btn-sm btn-outline-primary">Reset Chart</button>  
+          <button id="clipboard" class="btn btn-sm btn-outline-primary ml-3">Copy to Clipboard</button> 
+          <a id="btn-save-image" class="btn btn-sm btn-outline-primary ml-3">Save Image</a>
+        </div>
+        <div class="mt-3">
+          <label for="annotation-text">Annotation text:</label> <br>
+          <input type="text" id="annotation-text" name="annotation-text">
+          <button id="btn-annotate1" class="btn btn-sm btn-outline-primary">Insert Text</button>
+        </div>
+      </div>
+      <div>
+        <div class="mt-3">Choose a pen colour:</div>
+        <div style="display:inline-grid; grid-template-columns:auto auto auto; grid-gap:10px" class="ml-5 mt-1">
+          <div style="width:15px;height:15px;background:green;" id="green" onclick="colour(this)"></div>
+          <div style="width:15px;height:15px;background:blue;" id="blue" onclick="colour(this)"></div>
+          <div style="width:15px;height:15px;background:red;" id="red" onclick="colour(this)"></div>
+          <div style="width:15px;height:15px;background:yellow;" id="yellow" onclick="colour(this)"></div>
+          <div style="width:15px;height:15px;background:orange;" id="orange" onclick="colour(this)"></div>
+          <div style="width:15px;height:15px;background:black;" id="black" onclick="colour(this)"></div>
+        </div>
+        <div>Eraser:</div>
+        <div class="ml-5 mt-1" style="width:20px;height:20px;background:white;border:2px solid;" id="white" onclick="colour(this)"></div>
+      </div>
     </div>
   </div>    
   <hr>
@@ -180,7 +195,7 @@
   }
   
   function findxy(res, e) {
-      if (res == 'down') {
+      if (res == 'down' && e.button == 0) {
           prevX = currX;
           prevY = currY;
           //currX = e.layerX - can_w.offsetLeft;
@@ -216,7 +231,7 @@
 
   init();
 
-  // Handling copy image on the canvas to clipboard
+  // Copy image from the canvas to clipboard
   var $clipboard = $('#clipboard');
   $clipboard.on('click',function(e){
       var canvas = document.getElementById('canvas');
@@ -257,7 +272,7 @@
 
   // Save (Download) image
   var btn_save_img = document.getElementById("btn-save-image");
-  function save_image(){
+  function save_image(event){
     var canvas = document.getElementById('canvas');
     var imgageData = canvas.toDataURL();
 
@@ -267,7 +282,24 @@
     btn_save_img.setAttribute("href", imgageData);
     btn_save_img.setAttribute("download", "winn_download.png");
   };
-  btn_save_img.addEventListener('click', save_image());
+  btn_save_img.addEventListener("click", save_image);
+
+  // Insert annotation text onto the image.
+  document.getElementById("btn-annotate1").addEventListener("click", insert_annotation);
+  function insert_annotation(event) {
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    ctx.clearRect((canvas.width - 400), (canvas.height - 30), 400, 30);
+
+    //ctx.font = 'italic 18px Arial';
+    ctx.font = '18px Arial';
+    ctx.textAlign = 'left';
+    ctx. textBaseline = 'middle';
+    ctx.fillStyle = 'black';  // a color name or by using rgb/rgba/hex values = 
+    let text = "comment: " + document.getElementById("annotation-text").value;
+    ctx.fillText(text, (canvas.width - 400), (canvas.height - 20)); 
+  };
 
 
 </script>
