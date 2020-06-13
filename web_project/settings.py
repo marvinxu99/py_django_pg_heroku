@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'utils.apps.UtilsConfig',
     'itrac.apps.iTracConfig',
     'webgl.apps.WebglConfig',
+    'payments.apps.PaymentsConfig',
 
     'widget_tweaks',
 ]
@@ -197,6 +198,9 @@ GENERATED_BARCODE__DIR = os.path.join(BASE_DIR, 'generated_codes')
 LOGOUT_REDIRECT_URL = 'home'
 LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'accounts:login'
+
+STRIPE_PUBLISHABLE_KEY = 'pk_test_LBnp367Zb5XklDLhtXFg1cgr00SIM9ArGv'
+STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
 
 # Configure Django App for Heroku. 
 django_heroku.settings(locals())

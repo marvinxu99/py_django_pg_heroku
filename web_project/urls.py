@@ -18,10 +18,9 @@ from django.urls import path, include, re_path
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.static import serve as serve_media
 
 from core import views as core_views
-
+# import notifications.urls
 
 urlpatterns = [
     path('', core_views.index, name='home'),
@@ -29,21 +28,23 @@ urlpatterns = [
     path('polls/', include('polls.urls')),
     path('boards/', include('boards.urls')),
     path('accounts/', include('accounts.urls')),
-
+    
     path('catalog/', include('catalog.urls')),
     #path('', RedirectView.as_view(url='catalog/', permanent=True)),
 
     path('core/', include('core.urls')),
     path('kbase/', include('kbase.urls')),
     path('posts/', include('posts.urls')),
-    path('utils/', include('utils.urls')),
     
     path('winter_winnpy/', core_views.winter_winnpy, name='winter_winnpy'),
     path('winter_univer/', core_views.winter_univer, name='winter_univer'),
     path('face_recognition/', core_views.face_recognition, name='face_recognition'),
 
+    path('utils/', include('utils.urls')),
     path('itrac/', include('itrac.urls')),
     path('webgl/', include('webgl.urls')),
+    
+    path('payments/', include('payments.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
