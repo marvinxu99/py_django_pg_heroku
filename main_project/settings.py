@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'webgl.apps.WebglConfig',
     'payments.apps.PaymentsConfig',
     'budget.apps.BudgetConfig',
+    'scan_n_pay.apps.ScannPayConfig',
 
     'widget_tweaks',
 ]
@@ -202,6 +203,10 @@ LOGIN_URL = 'accounts:login'
 
 STRIPE_PUBLISHABLE_KEY = 'pk_test_LBnp367Zb5XklDLhtXFg1cgr00SIM9ArGv'
 STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
+
+# Oxford Dictionaries API
+OXFORD_APP_ID = config('OXFORD_APP_ID', default='')
+OXFORD_APP_KEY = config('OXFORD_APP_KEY', default='')
 
 # Configure Django App for Heroku. 
 django_heroku.settings(locals())
