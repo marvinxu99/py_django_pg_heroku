@@ -3,14 +3,14 @@
 // Class to hold basic item data (front-end)
 // iteminfo 
 class Item {
-    constructor(id, iteminfo, discount=0, discountType=1, quantity=1){
+    constructor(id, iteminfo, quantity=1, discount=0, discountType=1) {
         this.id = id;
     
         this.itemId = iteminfo.itemId;
         this.itemIdentId = iteminfo.itemIdentId;
         this.itemPriceId = iteminfo.itemPriceId;
         this.description = iteminfo.description;
-        this.price = iteminfo.price;               // regular price 
+        this.price = iteminfo.price;               // regular price of one unit
         this.quantity = quantity;
         this.discount = discount;         // this can be a percentage, or amount (UOM: dollar)
         this.discountType = discountType;            // 1: percentage off regular price (10 is 10%); 2: ammount off. (0.5 = 50 cents)
@@ -23,13 +23,13 @@ class Item {
     // For now - 
     calcFinalPrice() {
         if(this.discountType === 1) {         // amount off 
-            this.discountAmount = this.discount;
+            this.discountAmount = Math.round((this.discount * this.quantity + Number.EPSILON) * 100) / 100;
         } 
         else if (this.discountType === 2) {     /* percentage off */
-            this.discountAmount = this.price * (1 - this.discount/100);
+            this.discountAmount = Math.round(((this.price * (1 - this.discount/100)) * this.quantity + Number.EPSILON) * 100) / 100;
         }
 
-        this.priceFinal = this.price - this.discountAmount;
+        this.priceFinal = Math.round(((this.price * this.quantity - this.discountAmount) + Number.EPSILON) *100) / 100;
     }
 }
  
@@ -57,7 +57,7 @@ class TransactionData {
     }
 
     // add a new item
-    addItem(iteminfo, discount=0, discountType=1, quantity=1) {
+    addItem(iteminfo, quantity=1, discount=0, discountType=1) {
         let id, newItem; 
 
         // Create new ID
@@ -67,7 +67,7 @@ class TransactionData {
             id = 0;
         }
 
-        newItem = new Item(id, iteminfo, discount=0, discountType=1, quantity=1); 
+        newItem = new Item(id, iteminfo, quantity, discount, discountType); 
         newItem.calcFinalPrice();
 
         this.allItems.push(newItem);  
@@ -155,10 +155,10 @@ class UIController {
                         <button class="btn btn-sm" id="btn-${item.id}" style="display:none">&times;</button>
                         ${item.description}
                     </td>
+                    <td class="item-original-price">${item.price.toFixed(2)}</td>
                     <td class="item-quantity">${item.quantity}</td>
-                    <td class="item-original-price">${item.price}</td>
-                    <td class="item-discount">${item.discountAmount}</td>
-                    <td class="item-price">${item.priceFinal}</td>`
+                    <td class="item-discount">${item.discountAmount.toFixed(2)}</td>
+                    <td class="item-price">${item.priceFinal.toFixed(2)}</td>`
     
         // Insert the HTML into the DOM
         const listRef = document.getElementById(this.DOMstrings.itemsList);
@@ -193,11 +193,11 @@ class UIController {
     static updateTotals({ quantity, originalPrice, discount, price }) {
         // Update the total price as well
         let html = `<td class="text-right item-name"><strong> Totals:</strong></td>
+                <td class="item-original-price">
+                    ${ this.formatMoney(discount + price) }
+                </td>
                 <td class="item-quantity">
                     ${ quantity }
-                </td>
-                <td class="item-original-price">
-                    ${ this.formatMoney(originalPrice) }
                 </td>
                 <td class="item-discount">
                     ${ this.formatMoney(discount) }
@@ -259,12 +259,12 @@ class UIController {
 // global variable to hol transaction data
 const transData = new TransactionData();
 
-// To retrieve item information
+// To retrieve item information 
 async function getItemInfo(barcode) {
     try {
         const result = await fetch(`get_item/?barcode=${barcode}`);
         const data = await result.json();
-        console.log(data);
+        console.log("data=", data);
         if(data.validInd === 1) {
             
             // 1. Add the item data to TransData
@@ -291,9 +291,12 @@ async function getItemInfo(barcode) {
 }
 
 function getItemInfoByCode() {
-    const barcode =  document.getElementById(UIController.DOMstrings.barcodeInput).value;
+    const barcode_input = document.getElementById(UIController.DOMstrings.barcodeInput);
+    const barcode = barcode_input.value;
     if (barcode.length > 0) {
         getItemInfo(barcode);
+        
+        barcode_input.focus();
     }
 }
 
@@ -305,7 +308,7 @@ const setupEventListeners = () => {
     const barcode_input = document.getElementById(UIController.DOMstrings.barcodeInput)
     barcode_input.addEventListener('keypress', function(event) {   
         if((event.keyCode === 13) || (event.which === 13)      /* Enter key */
-            || (event.keyCode === 32) || (event.which === 32))   /* or space key */
+            || (event.keyCode === 9) || (event.which === 9))   /* or Tab key */
         {  
             event.preventDefault();
             getItemInfoByCode();
@@ -314,7 +317,8 @@ const setupEventListeners = () => {
     barcode_input.addEventListener('blur', function(event) {   
         event.preventDefault();
         getItemInfoByCode();
-        barcode_input.focus();
+
+        return false;
     })
 
     // When the Send Data! button is clicked
@@ -362,13 +366,16 @@ function sendTransData() {
 // data: should be an object of (k,v)'s 
 async function sendData(url, data) {
 
+    let csrftoken = getCookie('csrftoken');
+
     const rawResponse = await fetch(url, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
+      headers: { "X-CSRFToken": csrftoken },
     });
 
     const resp = await rawResponse.json();

@@ -15,7 +15,7 @@
           <input class="button" type="button" id="btn_enter" value="Enter">
           <button class="btn btn-sm btn-outline-secondary ml-5" id="btn_search_products"
             data-toggle="modal" data-target="#searchProductsModal"
-            data-whatever="test"
+            data-url="{% url 'scan_n_pay:search-products' %}"
           >
             Search Products
           </button>
@@ -43,8 +43,8 @@
           <thead>
             <tr class="bg-primary">
               <th class="item-name">Product Name</th>
-              <th class="item-quantity">Quantity</th>
               <th class="text-center item-original-price">Original Price</th>
+              <th class="item-quantity">Quantity</th>
               <th class="text-center item-discount">Discount</th>
               <th class="text-center item-price">Price</th>
             </tr>
@@ -54,8 +54,8 @@
           <tfoot>
             <tr id="total_price">
               <td class="text-right item-name"><strong>Totols:</strong></td>
-              <td class="item-quantity"><strong>0</strong></td>
               <td class="item-discount item-original-price"><strong>$0.00</strong></td>
+              <td class="item-quantity"><strong>0</strong></td>
               <td class="item-discount"><strong>$0.00</strong></td>
               <td class="item-price total-price"><strong>$0.00</strong></td>
             </tr>
@@ -105,13 +105,21 @@
         </button>
       </div>
       <div class="modal-body">
-          <p>test item 1</p>
-          <p>test item 1</p>
-          <p>test item 1</p>
-          <p>test item 1</p>
+        <table class="table" id="products-table">
+          <thead>
+            <tr>
+              <th style="width:50%;">Description</th>
+              <th class="text-center">Price</th>
+              <th class="text-center" style="width:30%">Quantity to Purchase</th>
+            </tr>
+          </thead>
+          <tbody id="search_item_list">
+          </tbody>
+        </table>      
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary js_select_items" id="select-items-btn">Select Item(s)</button>
       </div>
     </div>
   </div>

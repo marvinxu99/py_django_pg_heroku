@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.generic.base import TemplateView
 from django.conf import settings
 from django.http.response import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+# from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 from django.apps import apps
 from django.utils import timezone
@@ -14,35 +14,29 @@ from core.constants import ENTRY_MODE, RESULT_STATUS, TRANSACTION_TYPE
 from core.models import TransEvent, TransItem
 
 
-@csrf_exempt
 @login_required
+# @csrf_exempt
 @transaction.atomic
 def save_trans_data(request):
-    # accept POST
+    ''' 
+    (1) Save transaction event + (2) save the items included in the transaction
+    '''
+    # Only accept POST
     if request.method != 'POST':
         return { 'status': 'F' }
 
     trans_data = json.loads(request.body)
     num_trans_items = len(trans_data['allItems'])
 
-    print(trans_data)
-    print(f"there are { num_trans_items } items in the transdata.")
-    
-    # Validate data before saving..
-    # print(trans_data['totals'])
-    # print(trans_data['coupon'])
-
     # Save data
     try:
-        # 1. Save transacrion event data
+        # 1. Save transaction event
         trans_event_pk = save_trans_event(trans_data)
         print(trans_event_pk)
 
-        # 2. Save transaction items data
+        # 2. Save transaction items
         save_trans_items(trans_data, trans_event_pk)
 
-
-        ## te_rec.event_id = 
         resp = {
             'status': 'S',         # 'S': successful, 'F': Failed 
             'item_count': num_trans_items,
@@ -58,6 +52,7 @@ def save_trans_data(request):
     return JsonResponse(resp)
 
 
+@transaction.atomic
 def save_trans_event(trans_data):
     # Save data
     try:
@@ -115,7 +110,6 @@ def save_trans_items(trans_data, event_id):
 
     try:
         trans_items = []
-
         for i in range(len(items)):
             trans_items.append(
                 TransItem(
