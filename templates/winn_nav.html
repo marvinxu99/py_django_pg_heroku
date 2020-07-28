@@ -9,7 +9,7 @@
         <div class="dropdown-menu dropdown-menu-left" aria-labelledby="appsMenu">
           <a class="dropdown-item" href="{% url 'boards:boards_home' %}"><i class="fas fa-clipboard-list"></i> Boards</a>
           <a class="dropdown-item" href="{% url 'posts:all_posts' %}"><i class="fa fa-camera" aria-hidden="true"></i> Insta Posts</a>
-          <a class="dropdown-item" href="{% url 'itrac:get_issues' %}"><i class="fas fa-clipboard-check"></i> Issue Tracker</a>
+          <a class="dropdown-item" href="{% url 'itrac:issues_assigned_to_me' %}"><i class="fas fa-clipboard-check"></i> Issue Tracker</a>
           <a class="dropdown-item" href="{% url 'catalog:index' %}"><i class="fas fa-book-reader"></i> Mini Library</a>
           <a class="dropdown-item" href="{% url 'polls:question' %}"><i class='fas fa-poll-h'></i> Polls</a>
           <a class="dropdown-item" href="{% url 'scan_n_pay:scan_n_pay' %}">
@@ -43,9 +43,9 @@
             <i class="far fa-image"></i> Web Graphic
           </a>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="webglMenu">
-            <a class="dropdown-item" href="{% url 'webgl:burns-chart' %}"><i class="fa fa-fire" aria-hidden="true"></i> Burns Chart</a>
-            <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{% url 'utils:robot_friends' %}"><i class="fas fa-robot"></i> Robot Friends</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'webgl:burns-chart' %}"><i class="fa fa-fire" aria-hidden="true"></i> Burns Chart</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{% url 'webgl:animation' %}"><i class="fa fa-spinner fa-spin"></i> Animation</a>
             <a class="dropdown-item" href="{% url 'webgl:triangle-colour' %}"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Triangle</a>
@@ -59,6 +59,7 @@
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="utilMenu">
             <a class="dropdown-item" href="{% url 'utils:solution_calculator' %}"><i class="fa fa-calculator" style="font-size:16px;color:red"></i> Solution Calculator</a>
             <a class="dropdown-item" href="{% url 'utils:highcharts_clock' %}"><i class="fa fa-clock-o" style="font-size:24px"></i> Highcharts Clock</a>
+            <a class="dropdown-item" href="{% url 'books:books_list' %}"></i> Books(ajax+json)</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{% url 'utils:oxford' %}"><i class="fa fa-search-plus" aria-hidden="true"></i> Oxford Dictionary</a>
             <a class="dropdown-item" href="{% url 'budget:budget_home' %}" target="_blank"><i class="fa fa-balance-scale" aria-hidden="true"></i> Budgety</a>

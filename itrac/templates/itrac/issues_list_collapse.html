@@ -1,0 +1,127 @@
+{% extends 'itrac/base_itrac.html'%}
+{% block subcontent %}
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+<div >
+  <div class="d-flex align-items-center">
+    <div >There are {{ issue_count_total }} issues in total. </div>
+    <form class="ml-3" action="{% url 'itrac:do_search' %}" method="get">
+        <input type="text" name="q">
+        <button class="btn" type="submit">Search</button>
+    </form>
+  </div>
+  <div class="row mt-3 d-flex align-items-center" style="border: 2px solid lightgray; height: 8vh;">
+    <div class="col-md-8">  
+      <div class="dropdown">
+        <h2><span id="issue-filter-title">{{ filter_name }}</span>
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            (switch filter) <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+            <li><a class="dropdown-item" href="{% url 'itrac:issues_assigned_to_me' %}">My Open Issues</a></li>
+            <li><a class="dropdown-item" href="{% url 'itrac:issues_reported_by_me' %}">Reported by me</a></li>
+            <li><a class="dropdown-item" href="{% url 'itrac:issues_reported_by_me2' %}">Reported by me2</a></li>
+            <li><a class="dropdown-item" href="#">All issues</a></li>
+            <li><a class="dropdown-item" href="#">Open issues</a></li>
+            <div class="dropdown-divider"></div>
+            <li><a class="dropdown-item" href="#">Separated link</a></li>
+          </ul>
+        </h2>
+      </div>
+    </div>
+    <div class="col-md-4 text-right">
+      <a href="#">View all issues and filters</a>
+    </div>
+  </div>
+  <div class="row" style="border-bottom: 2px solid lightgrey;">
+    <div class="searh-results col-md-4" style="height:65vh; overflow:auto;">
+      <ul class="list-group list-group-flush issue-list">
+        {% for issue in issues %}
+          <li  class="list-group-item js_issue_item">
+            <a class="js_issue_item_title" href="#issue{{ forloop.counter }}" data-toggle="collapse">{{ issue.issue_id }}: {{ issue.title }}</a>
+            <button class="btn btn-sm btn-outline-info js_issue_partial" data-url="{% url 'itrac:issue_detail_partial' issue.id %}" 
+                style="display:none" title="Click to view more details">
+                <i class='fas fa-angle-double-right' style='font-size:16px'></i>
+            </button>
+            <div id="issue{{ forloop.counter }}" class="collapse">
+                <p><span><b>Created: </b>{{ issue.created_date }}</span></p>
+                <p><span><b>Updated: </b>{{ issue.updated_date }}</span></p>
+                <p><span><b>Tags: </b>{{ issue.tags }}</span></p>
+                <p><span><b>Upvotes: </b>{{ issue.upvotes }}</span></p>
+                <p><span><b>Status: </b>{{ issue.status }}</span></p>
+                <p><span><b>Type: </b>{{ issue.issue_type }}</span></p>
+                <p><span><b>Reporter: </b>{{ issue.author }}</span></p>
+                <p><span><b>Assignee: </b>{{ issue.assignee }}</span></p>
+            </div>
+          </li>
+        {% empty %}
+          No issue has been created yet.
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="col-md-8" id="issue-details" style="border-left:1px solid lightgray;">
+      Issue details go here.
+    </div>
+  </div>
+</div>
+
+<script>
+$(function () {
+  // SHow the "click to view" icon when mouse over the item-name
+  function mouseOverListItem(event) {
+      const target = $(event.target);
+      target.children(':nth-child(2)').css('display', 'inline');
+  }
+
+  // Hide the "click to view" icon when mouse leaves the item-name
+  function mouseLeaveListItem(event) {
+      const target = $(event.target);
+      target.children(':nth-child(2)').css('display', 'none');
+  }
+
+  const issue_details_ajax = (url) => {
+      $.ajax({
+          url: url,
+          type: 'get',
+          dataType: 'json',
+          beforeSend: function () {
+              $("#issue-details").html("Loading...")
+          },
+          success: function (data) {
+              $("#issue-details").html(data.html_issue_detail);
+              
+              //set up the event istener
+              $(".js-collapse-toggle").click(function () {
+                  console.log("toggle")
+                  $(this).find('i').toggleClass('fa-minus-circle fa-plus-circle');
+              });
+
+              // default to expand
+              $(".js-collapse-details").collapse();
+          }
+      });
+  };
+
+  const loadIssueDetailPartial = function () {
+      const btn = $(this);
+      url = btn.attr("data-url");
+      issue_details_ajax(url);
+  };
+
+  $(".js_issue_item").on("mouseover", mouseOverListItem);
+  $(".js_issue_item").on("mouseleave", mouseLeaveListItem);
+  
+  $(".js_issue_partial").click(loadIssueDetailPartial);
+
+  $(".js-collapse-toggle").click(function () {
+    $(this).find('i').toggleClass('fa-minus-circle fa-plus-circle');
+  });
+  
+});
+</script>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'itrac/base_itrac.html' %}
+{% block subcontent %}
+<div class="row justify-content-center">
+  <div class='card w-75 borderless'>
+    <div class='card-body'>
+      {% include 'includes/partial_issue_details.html' %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% load static %}
+{% block subjavascript %}
+<script>
+$(function() { 
+    //set up the event istener
+    $(".js-collapse-toggle").click(function () {
+        console.log("toggle")
+        $(this).find('i').toggleClass('fa-minus-circle fa-plus-circle');
+    });
+  
+    // default to expand
+    $(".js-collapse-details").collapse();
+  
+});
+</script>
+{% endblock %}

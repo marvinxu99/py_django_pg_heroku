@@ -7,54 +7,61 @@
     {% endfor %}
   </ul>
 {% endif %}
-<div>
-  <div>
-    <p>{{ issue_count }}</p>
-    <form action="{% url 'itrac:do_search' %}" method="get">
-        <input type="text" name="q">
-        <button class="btn waves-effect waves-light"  type="submit"><i class="material-icons right">search</i>Search</button>
+<div >
+  <div class="d-flex align-items-center">
+    <div >There are <span class="text-info">{{ issue_count_total }}</span> issues in total. </div>
+    <form class="ml-3" action="{% url 'itrac:do_search' %}" method="get">
+        <input type="text" name="q" placeholder="search">
+        <button class="btn" type="submit">
+          <i class="fa fa-search" title="Search"></i>
+        </button>
     </form>
   </div>
-  <ul class="collapsible popout">
-  {% for issue in issues %}
-    <li>
-      <div class="collapsible-header"><i class="material-icons">expand_more</i>{{ issue.title }}
+  <div class="row mt-3 d-flex align-items-center" style="border: 2px solid lightgray; height: 8vh;">
+    <div class="col-md-8">  
+      <div class="dropdown d-flex align-items-center">
+        <span class="h3" id="issue-filter-title">{{ filter_name }}</span>
+        <span class="text-info ml-1"> [{{ issue_count_filter }} issues]</span>
+        <button class="btn btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          (switch filter) <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+          <li><a class="dropdown-item" href="{% url 'itrac:issues_assigned_to_me' %}">My Open Issues</a></li>
+          <li><a class="dropdown-item" href="{% url 'itrac:issues_reported_by_me' %}">Reported by me</a></li>
+          <li><a class="dropdown-item" href="{% url 'itrac:issues_reported_by_me2' %}">Reported by me2</a></li>
+          <li><a class="dropdown-item" href="#">All issues</a></li>
+          <li><a class="dropdown-item" href="#">Open issues</a></li>
+          <div class="dropdown-divider"></div>
+          <li><a class="dropdown-item" href="#">Separated link</a></li>
+        </ul>
       </div>
-      <div class="collapsible-body">
-          <a class="btn-floating btn-large" href="{% url 'itrac:issue_detail' issue.id %}"><i class="material-icons">navigate_next</i></a>
-          <p><span><b>Created: </b>{{ issue.created_date }}</span></p>
-          <p><span><b>Tag: </b>{{ issue.tag }}</span></p>
-          <p><span><b>Upvotes: </b>{{ issue.upvotes }}</span></p>
-          <p><span><b>Status: </b>{{ issue.status }}</span></p>
-          <p><span><b>Type: </b>{{ issue.issue_type }}</span></p>
-          <p><span><b>Logged by: </b>{{ issue.author }}</span></p>
-          <p><span><b>Assigned to: </b>{{ issue.assignee }}</span></p>
-      </div>
-    </li>
-  {% endfor %}
-  </ul>
-  {% if issues.has_other_pages %}
-  <ul class="pagination">
-      {% if issues.has_previous %}
-          <li><a href="?page={{ issues.previous_page_number }}"><i class="material-icons">chevron_left</i></a></li>
-      {% else %}
-          <li class="disabled"><i class="material-icons">chevron_left</i></li>
-      {% endif %} 
-      
-      {% for i in issues.paginator.page_range %} 
-          {% if issues.number == i %}
-              <li class="active"><a>{{ i }}</a></li>
-          {% else %}
-          <li><a href="?page={{ i }}">{{ i }}</a></li>
-          {% endif %} 
-      {% endfor %} 
-      
-      {% if issues.has_next %}
-          <li><a href="?page={{ issues.next_page_number }}"><i class="material-icons">chevron_right</i></a></li>
-      {% else %}
-          <li class="disabled"><i class="material-icons">chevron_right</i></li>
-      {% endif %}
-  </ul>
-  {% endif %} 
+    </div>
+    <div class="col-md-4 text-right">
+      <a href="#">View all issues and filters</a>
+    </div>
+  </div>
+  <div class="row" style="border-bottom: 2px solid lightgrey;">
+    <div class="search-results col-md-4" id="search-results-list" style="height:65vh; overflow:auto;">
+      <ul class="list-group list-group-flush issue-list">
+        {% for issue in issues %}
+          <li  class="list-group-item js_issue_item">
+            <a class="js_issue_item_title" data-url="{% url 'itrac:issue_detail_partial' issue.id %}">
+              <span class="text-muted">{{ issue.issue_id }}:</span> {{ issue.title }}
+            </a>
+          </li>
+        {% empty %}
+          Not found.
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="col-md-8" id="issue-details" style="border-left:1px solid lightgray;height:65vh;overflow:auto;">
+      Issue details go here.
+    </div>
+  </div>
 </div>
 {% endblock %}
+{% load static %}
+{% block subjavascript %}
+  <script src="{% static 'itrac/js/issue.js' %}"></script>
+{% endblock %}
+
