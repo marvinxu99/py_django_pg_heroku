@@ -169,6 +169,7 @@ def issue_detail(request, pk):
 
 
 @login_required()
+@require_GET
 def issue_detail_partial(request, pk):
     """
     Create a view that returns a single
