@@ -3,6 +3,8 @@ from django.utils import timezone
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _ 
 from django.urls import reverse
+from markdown import markdown
+from django.utils.html import mark_safe
 
 from .tag import Tag
 
@@ -33,11 +35,11 @@ class Issue(models.Model):
     issue_prefix = models.CharField(max_length=20, default='WINN')
     
     title = models.CharField(max_length=200)
-    description = models.TextField()
+    description = models.TextField(max_length=4000, blank=True)
     slug = models.CharField(max_length=250, blank=True)
     
     is_resolved = models.BooleanField(default=False)
-    resolved_date = models.DateTimeField(blank=True, null=True)
+    resolved_date = models.DateField(blank=True, null=True)
     upvotes = models.IntegerField('likes', default=0)
     
     tags = models.ManyToManyField(Tag, related_name='issues', blank=True)
@@ -46,6 +48,7 @@ class Issue(models.Model):
 
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(settings.AUTH_USER_MODEL,related_name='issue_updated_by', on_delete=models.CASCADE, blank=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL,related_name='issue_author', on_delete=models.CASCADE)
     assignee = models.ForeignKey(settings.AUTH_USER_MODEL,related_name='issue_assignee', null=True, on_delete=models.CASCADE)
 
@@ -75,43 +78,15 @@ class Issue(models.Model):
     def get_absolute_url(self):
         return reverse('itrac:issue_detail', args=(self.slug,))
 
-
-class Comment(models.Model):
-        """
-        A single Comment
-        """
-        comment = models.CharField(max_length=200)
-        created_date = models.DateTimeField(auto_now_add=True)
-        updated_date = models.DateTimeField(auto_now=True)
-        author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='comment_author', on_delete=models.CASCADE)
-        issue = models.ForeignKey(Issue, related_name='comment_issue', on_delete=models.CASCADE)
-
-        def __str__(self):
-            return self.comment
-
-
-class Reply(models.Model):
-    """
-    A single reply
-    """
-    reply = models.CharField(max_length=200)
-    created_date = models.DateTimeField(auto_now_add=True)
-    updated_date = models.DateTimeField(auto_now=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='reply_author', on_delete=models.CASCADE)
-    comment = models.ForeignKey(Comment, related_name='reply_comment', on_delete=models.CASCADE)
-
-    def __unicode__(self):
-        return self.reply
-
-    def __str__(self):
-        return self.reply
+    def get_description_as_markdown(self):
+        return mark_safe(markdown(self.description, safe_mode='escape'))
 
 
 class SavedIssue(models.Model):
     """
     A single SavedIssue
     """
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_savedissue', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_savedissues', on_delete=models.CASCADE)
     issue = models.ForeignKey(Issue, related_name='issue_savedissue', on_delete=models.CASCADE)
     created_date = models.DateTimeField(auto_now_add=True)
 

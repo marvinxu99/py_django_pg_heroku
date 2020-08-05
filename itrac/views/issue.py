@@ -6,67 +6,17 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.conf import settings
 from django.contrib import messages
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
 from django.db.models import Count, Q
 from django.core import serializers
 from django.template.loader import render_to_string
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
+from django.contrib.auth import get_user_model
 import json
 
-
-from ..models import Issue, Comment, Reply, SavedIssue, Tag, ISSUE_STATUS
-from ..forms import IssueForm, CommentForm, ReplyForm
+from ..models import Issue, Comment, SavedIssue, Tag, ISSUE_STATUS
+from ..forms import IssueEditForm, IssueCreateForm, CommentForm, IssueEditDescriptionForm
 from ..filters import IssueFilter
-
-
-def report(request):
-    today = datetime.now().date()
-    tomorrow = today + timedelta(1)
-    today_start = datetime.combine(today, time())
-    today_end = datetime.combine(tomorrow, time())
-    completed_daily = Issue.objects.filter(resolved_date__gte=today_start).filter(resolved_date__lt=today_end).count()
-
-    this_week_start = datetime.combine(today - timedelta(7), time())
-    completed_weekly = Issue.objects.filter(resolved_date__gte=this_week_start).filter(resolved_date__lt=today_end).count()
-
-    this_month_start = datetime.combine(today - timedelta(28), time())
-    completed_monthly = Issue.objects.filter(resolved_date__gte=this_month_start).filter(resolved_date__lt=today_end).count()
-    print(completed_daily)
-
-    return render(request, "itrac/report.html", {'completed_daily': str(completed_daily), 'completed_weekly': str(completed_weekly), 'completed_monthly': str(completed_monthly)})
-
-
-def do_search_my(request):
-    """
-    Create a view for searching my issues by keyword search on Issue.Title to return a list
-    of matching Issues and render them to the 'myissues.html' template
-    """
-    user = request.user
-    issues = Issue.objects.filter(author=user).filter(title__icontains=request.GET['q'])
-    return render(request, "itrac/myissues.html", {"issues": issues})
-
-
-def do_search(request):
-    """
-    Create a view for searching all issues by keyword search on Issue.Title to return a list
-    of matching Issues and render them to the 'issues.html' template
-    """
-    issues = Issue.objects.filter(title__icontains=request.GET['q'])
-
-    issue_count_total = Issue.objects.count()
-    issue_count_filter = issues.count()
-
-    filter_name = f'''Issue title contains "{ request.GET['q']}" '''
-
-    context = {
-            'issue_count_total': issue_count_total,
-            'issue_count_filter': issue_count_filter,
-            'issues': issues,
-            'filter_name': filter_name,
-        }
-
-    return render(request, "itrac/issues.html", context)
 
 
 @login_required
@@ -81,12 +31,12 @@ def issues_assigned_to_me(request):
 
     issue_count_filter = issues.count()
 
-    
     context = {
             'issue_count_total': issue_count_total,
             'issue_count_filter': issue_count_filter,
             'issues': issues,
             'filter_name': "My Open Issues",
+            'refresh_url': reverse('itrac:issues_assigned_to_me'),
         }
 
     return render(request, "itrac/issues.html", context)
@@ -109,7 +59,8 @@ def issues_reported_by_me(request):
         'issue_count_total': issue_count_total,
         'issue_count_filter': issue_count_filter,
         'issues': issues,
-        'filter_name': "Reported by me"
+        'filter_name': "Reported by me",
+        'refresh_url': reverse('itrac:issues_reported_by_me'),
     }
 
     return render(request, "itrac/issues.html", context)
@@ -121,20 +72,57 @@ def issues_reported_by_me2(request):
     Create a view that will return a list
     of current user's Issues and render them to the 'myissues.html' template
     """
+    issue_count_total = Issue.objects.count()
+
     user = request.user
     issues = Issue.objects.filter(author=user).order_by('-created_date')
 
-    issue_count_total = Issue.objects.count()
     issue_count_filter = issues.count()
 
     context = {
         'issue_count_total': issue_count_total,
         'issue_count_filter': issue_count_filter,
         'issues': issues,
-        'filter_name': "Reported by me2"
+        'filter_name': "Reported by me2(TEST)"
     }
 
     return render(request, "itrac/issues_list_collapse.html", context)
+
+
+@login_required()
+def filtered_issues(request, filter):
+    """
+    Create a view that will return a list of "All issues" or "Open Issues" 
+    filter: 'all' or 'open'
+    """
+    issue_count_total = Issue.objects.count()
+
+    issues = None
+    filter_name = ''
+    refresh_url = None
+
+    if filter == "all":
+        filter_name = 'All issues'
+        issues = Issue.objects.all().order_by('-created_date')
+        refresh_url = 'itrac:filtered_issues_all'
+
+    elif filter == "open":
+        filter_name = 'All open issues'
+        issues = Issue.objects.filter(status=ISSUE_STATUS.OPEN).order_by('-created_date')
+        refresh_url = 'itrac:filtered_issues_open'
+
+    issue_count_filter = issues.count()
+
+    context = {
+        'issue_count_total': issue_count_total,
+        'issue_count_filter': issue_count_filter,
+        'issues': issues,
+        'filter_name': filter_name,
+        'refresh_url': reverse(refresh_url),
+    }
+
+    return render(request, "itrac/issues.html", context)
+
 
 @login_required()
 def issues_with_tag(request):
@@ -160,110 +148,6 @@ def issues_with_tag(request):
 
 
 @login_required()
-def saved_issues(request):
-    """
-    Create a view that will return a list
-    of current user's Saved Issues and render them to the 'issues.html' template
-    """
-    user = request.user
-    savedissues = SavedIssue.objects.filter(user=user).order_by('-created_date')
-    return render(request, "itrac/savedissues.html", {'savedissues': savedissues})
-
-
-def my_notifications(request):
-    """
-    Create a view that will return a list
-    of notifications for the user to the 'notifications.html' template
-    """
-
-    user = request.user
-    notifications = Notification.objects.unread().filter(recipient=user).order_by('-timestamp')
-    return render(request, "itrac/notifications.html", {'notifications': notifications})
-
-
-def get_issue_type_json(request):
-    dataset = Issue.objects \
-        .values('issue_type') \
-        .exclude(issue_type='') \
-        .annotate(total=Count('issue_type')) \
-        .order_by('issue_type')
-
-    chart = {
-        'chart': {'type': 'column'},
-        'title': {'text': 'Issue Type'},
-        'xAxis': {'type': "category"},
-        'series': [{
-            'name': 'Issue Type',
-            'data': list(map(lambda row: {'name': [row['issue_type']], 'y': row['total']}, dataset))
-        }]
-    }
-
-    return JsonResponse(chart)
-
-
-def get_status_json(request):
-    dataset = Issue.objects \
-        .values('status') \
-        .exclude(status='') \
-        .annotate(total=Count('status')) \
-        .order_by('status')
-
-    chart = {
-        'chart': {'type': 'pie'},
-        'title': {'text': 'Issue Status'},
-        'series': [{
-            'name': 'Issue Status',
-            'data': list(map(lambda row: {'name': [row['status']], 'y': row['total']}, dataset))
-        }]
-    }
-
-    return JsonResponse(chart)
-
-def get_bug_upvotes_json(request):
-    dataset = Issue.objects \
-        .filter(issue_type='BUG') \
-        .values('upvotes', 'title') \
-        .exclude(upvotes=0) \
-        .order_by('upvotes')
-
-    chart = {
-        'chart': {'type': 'pie'},
-        'title': {'text': 'Top Bug Upvotes'},
-        'series': [{
-            'name': 'Issue Upvotes',
-            'data': list(map(lambda row: {'name': [row['title']], 'y': row['upvotes']}, dataset))
-        }]
-    }
-
-    return JsonResponse(chart)
-
-def get_feature_upvotes_json(request):
-    dataset = Issue.objects \
-    .filter(issue_type='FEATURE') \
-    .values('upvotes', 'title') \
-    .exclude(upvotes=0) \
-    .order_by('upvotes')
-
-    chart = {
-        'chart': {'type': 'pie'},
-        'title': {'text': 'Top Feature Upvotes'},
-        'series': [{
-            'name': 'Issue Upvotes',
-            'data': list(map(lambda row: {'name': [row['title']], 'y': row['upvotes']}, dataset))
-        }]
-    }
-
-    return JsonResponse(chart)
-
-
-@login_required()
-def search(request):
-    issue_list = Issue.objects.all()
-    issue_filter = IssueFilter(request.GET, queryset=issue_list)
-    return render(request, 'itrac/search_issues.html', {'filter': issue_filter})
-
-
-@login_required()
 def issue_detail(request, pk):
     """
     Create a view that returns a single
@@ -274,15 +158,11 @@ def issue_detail(request, pk):
     """
     issue = get_object_or_404(Issue, pk=pk)
     comments = Comment.objects.filter(issue=pk)
-    comment_replies = []
-    for comment in comments:
-        replies = Reply.objects.filter(comment=comment)
-        comment_replies.append(replies)
 
     context = {
         'issue': issue, 
         'comments': comments, 
-        'comment_replies': comment_replies
+        'btn_expand_disabled': True,   # disable the expand button as it is fullscreen already 
     }
 
     return render(request, "itrac/issue_detail.html", context)
@@ -293,24 +173,27 @@ def issue_detail_partial(request, pk):
     """
     Create a view that returns a single
     Issue object based on the issue ID (pk) and
-    render it to the 'issuedetail.html' template.
-    Or return a 404 error if the issue is
-    not found
+    render it to the 'issuedetail.html' and issue.html templates.
+    Or return a 404 error if the issue is not found
     """
     data = dict()
     issue = get_object_or_404(Issue, pk=pk)
-    comments = Comment.objects.filter(issue=pk)
-    comment_replies = []
-    for comment in comments:
-        replies = Reply.objects.filter(comment=comment)
-        comment_replies.append(replies)
+    comments = Comment.objects.filter(issue=pk).order_by('created_date')
+
+    user = request.user
+    issue = Issue.objects.get(pk=pk)
+    try:
+        savedissue = SavedIssue.objects.get(user=user, issue=issue)
+        favourite = True
+    except SavedIssue.DoesNotExist:
+        savedissue = None
+        favourite = False
 
     context = {
         'issue': issue, 
         'comments': comments, 
-        'comment_replies': comment_replies
+        'favorite': favourite,
     }
-
     data['html_issue_detail'] = render_to_string('includes/partial_issue_details.html', context, request=request)
 
     return JsonResponse(data)
@@ -325,29 +208,6 @@ def upvote(request, pk):
     messages.success(request, 'Issue upvoted!')
     return redirect('itrac:issue_detail', pk)
 
-@login_required()
-def save_issue(request, pk):
-    user = request.user
-    issue = Issue.objects.get(pk=pk)
-    try:
-        savedissue = SavedIssue.objects.get(user=user, issue=issue)
-    except SavedIssue.DoesNotExist:
-        savedissue = None
-    if savedissue is None:
-        savedissue = SavedIssue(user=user, issue=issue)
-        savedissue.save()
-        messages.success(request, 'Issue added to your Saved Issues!')
-    else:
-        messages.error(request, 'Issue already added in your Saved Issues!')
-    return redirect('itrac:issue_detail', pk)
-
-@login_required()
-def delete_saved_issue(request, pk):
-    savedissue = SavedIssue.objects.get(pk=pk)
-    savedissue.delete()
-    messages.success(request, 'Saved Issue deleted!')
-    return redirect('saved_issues')
-
 
 @login_required()
 def create_issue(request):
@@ -356,10 +216,12 @@ def create_issue(request):
     is null or not
     """
     if request.method == "POST":
-        form = IssueForm(request.POST, request.FILES)
+        form = IssueCreateForm(request.POST, request.FILES)
         if form.is_valid():
             
             form.instance.author = request.user
+            form.instance.updated_by = request.user
+
             if form.instance.issue_type == 'FEATURE':
                 form.instance.price = 100
             else:
@@ -368,7 +230,7 @@ def create_issue(request):
             
             return redirect('itrac:issue_detail', issue.pk)
     else:
-        form = IssueForm()
+        form = IssueCreateForm()
         
     return render(request, 'itrac/issue_create.html', {'form': form})
 
@@ -391,23 +253,75 @@ def edit_issue(request, pk):
             return redirect('itrac:issue_detail', issue.pk)
 
     if request.method == "POST":
-        form = IssueForm(request.POST, request.FILES, instance=issue)
+        form = IssueEditForm(request.POST, request.FILES, instance=issue)
         if form.is_valid():
 
-            form.instance.author = request.user
+            form.instance.updated_by = request.user
+
             if form.instance.issue_type == 'FEATURE':
                 form.instance.price = 100
             else:
                 form.instance.price = 0
+
             issue = form.save()
             # notify.send(request.user, recipient=issue.author, verb="updated your Issue: " + issue.title)
             messages.success(request, 'Issue Edited with success!')
 
             return redirect('itrac:issue_detail', issue.pk)
     else:
-        form = IssueForm(instance=issue)
+        form = IssueEditForm(instance=issue)
 
     return render(request, 'itrac/issue_edit.html', {'form': form})
+
+
+@login_required
+@require_GET
+def description_raw_markdown(request, pk):
+    """
+     return the raw markdown of the description field of the issue
+    """
+    issue = get_object_or_404(Issue, pk=pk)
+    data = {
+        'description': issue.description,  
+    }
+    return JsonResponse(data)
+
+
+@login_required
+@require_GET
+def description_as_html(request, pk):
+    """
+     return the raw markdown of the description field of the issue
+    """
+    issue = get_object_or_404(Issue, pk=pk)
+    data = {
+        'description': issue.description,  
+    }
+    return JsonResponse(data)
+
+
+@login_required
+@require_POST
+def edit_description(request, pk):
+    """
+    Create a view that allows us to create
+    or edit a comment depending if the Comment ID
+    is null or not
+    """
+    issue = get_object_or_404(Issue, pk=pk)
+
+    form = IssueEditDescriptionForm(request.POST, instance=issue)
+    if form.is_valid():
+        form.instance.updated_by = request.user
+        form.save()   
+        resp = { 'status': 'S', }         # 'S': successful, 'F': Failed 
+    else:
+        resp = {
+            'status': 'F',         # 'S': successful, 'F': Failed 
+            'error': "error",
+        }
+
+    return JsonResponse(resp)
 
 
 @login_required()
@@ -434,26 +348,43 @@ def issue_change_status(request, pk):
 
 
 @login_required()
-def create_or_edit_reply(request, issue_pk, comment_pk, pk=None):
+def change_assignee_users(request, pk):
     """
-    Create a view that allows us to create
-    or edit a reply depending if the Reply ID
-    is null or not
+    Return a list of users to be choices for assginee
     """
-    comment = get_object_or_404(Comment, pk=comment_pk)
-    reply = get_object_or_404(Reply, pk=pk) if pk else None
-    if request.method == "POST":
-        form = ReplyForm(request.POST, request.FILES, instance=reply)
-        if form.is_valid():
-            form.instance.author = request.user
-            form.instance.comment = comment
-            form.save()
-            # notify.send(request.user, recipient=comment.author, verb="added a reply to your Comment: " + comment.comment)
-            messages.success(request, 'Reply Saved!')
-            return redirect('itrac:issue_detail', issue_pk)
-    else:
-        form = ReplyForm(instance=reply)
-    return render(request, 'itrac/replyform.html', {'form': form})
+    data = dict()
 
+    print("requested..")
 
+    users = get_user_model().objects.all()
 
+    context = {
+        'issue_id': pk,
+        'users': users,
+    }
+
+    data['html_user_list'] = render_to_string('includes/partial_user_list.html', context, request=request)
+    data['status'] = 'S'
+
+    # TO ADD status change tracking later
+
+    return JsonResponse(data)
+
+@login_required()
+def change_assignee_change(request, pk, user_pk):
+    """
+    Update the database the selected user
+    """
+    data = dict()
+
+    issue = get_object_or_404(Issue, pk=pk)
+    user = get_object_or_404(get_user_model(), pk=user_pk)
+
+    issue.assignee = user
+    issue.save()
+    
+    data['status'] = 'S'
+
+    # TO ADD status change tracking later
+
+    return JsonResponse(data)

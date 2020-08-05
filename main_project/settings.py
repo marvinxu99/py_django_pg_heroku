@@ -130,8 +130,7 @@ DATABASES = {
 
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': 'winndb_users5',
-        'NAME': 'winn_prod',
+        'NAME': 'winn_prod_2',
         'USER': 'winter',
         'PASSWORD': 'winter',
         'HOST': 'localhost',
