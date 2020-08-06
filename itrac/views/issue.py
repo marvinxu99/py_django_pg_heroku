@@ -169,7 +169,6 @@ def issue_detail(request, pk):
 
 
 @login_required()
-@require_GET
 def issue_detail_partial(request, pk):
     """
     Create a view that returns a single
@@ -356,7 +355,6 @@ def change_assignee_users(request, pk):
     data = dict()
 
     users = get_user_model().objects.all()
-
     context = {
         'issue_id': pk,
         'users': users,
@@ -377,7 +375,10 @@ def change_assignee_change(request, pk, user_pk):
     data = dict()
 
     issue = get_object_or_404(Issue, pk=pk)
-    user = get_object_or_404(get_user_model(), pk=user_pk)
+    if user_pk > 0:
+        user = get_object_or_404(get_user_model(), pk=user_pk)
+    else:
+        user = None
 
     issue.assignee = user
     issue.save()
