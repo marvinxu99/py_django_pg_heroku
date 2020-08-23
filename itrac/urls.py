@@ -4,7 +4,7 @@ from . import views
 app_name = 'itrac'
 
 urlpatterns = [
-    path('', views.issues_assigned_to_me, name='issues_assigned_to_me'),
+    path('', views.my_in_progress_issues, name='my_in_progress_issues'),
     path('my_issues/', views.issues_reported_by_me, name='issues_reported_by_me'),
     path('my_issues2/', views.issues_reported_by_me2, name='issues_reported_by_me2'),
     path('saved_issues/', views.my_saved_issues, name='my_saved_issues'),
@@ -26,16 +26,26 @@ urlpatterns = [
 
     path('issue/<int:pk>/upvote/', views.upvote, name='upvote'),
     path('issue/<int:pk>/save_issue/', views.save_issue_favourite, name='save_issue_favourite'),
+
+    path('issue/tag/', views.issues_with_tag, name='issues_with_tag'),
     
-    # path('comment/<int:issue_pk>/new/', views.create_comment, name='new_comment'),
     path('comment/<int:issue_pk>/save_new/', views.save_new_comment, name='save_new_comment'),
     path('comment/<int:issue_pk>/<int:pk>/edit/', views.edit_comment, name='edit_comment'),
     path('comment/<int:issue_pk>/<int:pk>/delete/', views.delete_comment, name='delete_comment'),
     path('comment/<int:issue_pk>/<int:pk>/markdown/', views.comment_markdown, name='comment_markdown'),
 
-    path('issue/tag/', views.issues_with_tag, name='issues_with_tag'),
-    
-    path('search/', views.search, name='search'),
+    path('project/', views.project_list, name='project_list'),
+    path('project/create/', views.project_create, name='project_create'),
+    path('project/edit/<int:pk>', views.project_edit, name='project_edit'),
+    path('project/delete/<int:pk>', views.project_delete, name='project_delete'),
+    path('project/set_current/<int:pk>', views.set_current_project, name='set_current_project'),
+
+    path('tag/', views.tag_list, name='tag_list'),
+    path('tag/create/', views.tag_create, name='tag_create'),
+    path('tag/edit/<int:pk>', views.tag_edit, name='tag_edit'),
+    path('tag/delete/<int:pk>', views.tag_delete, name='tag_delete'),
+
+    path('search/', views.search_issues, name='search'),
     path('do_search/', views.do_search, name='do_search'),
     path('do_search_my/', views.do_search_my, name='do_search_my'),
     

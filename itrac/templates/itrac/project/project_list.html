@@ -1,0 +1,41 @@
+{% extends 'itrac/base_itrac.html'%}
+{% load static %}
+{% block subcontent %}
+  <h1 class="page-header">Projects</h1>
+  {% if user.is_superuser %}
+  <p>
+    <button type="button" class="btn btn-primary js-create-project"
+            data-url="{% url 'itrac:project_create' %}">
+      <i class="fa fa-plus-circle" aria-hidden="true"></i>
+      New project
+    </button>
+  </p>
+  {% endif %}
+  <table class="table table-striped" id="project-table">
+    <thead>
+      <tr>
+        <th>Project</th>
+        <th>Code</th>
+        <th>Category</th>
+        <th>URL</th>
+        <th>Created date</th>
+        <th>Created by</th>
+        <th>Updated date</th>
+        <th>Updated by</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% include 'itrac/project/partial_project_list.html' %}
+    </tbody>
+  </table>
+  <!-- THE MODAL WE WILL BE USING -->
+  <div class="modal fade" id="modal-project">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block subjavascript %}
+  <script src="{% static 'itrac/js/project.js' %}"></script>
+{% endblock %}

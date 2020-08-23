@@ -26,7 +26,7 @@
       <div class="dropdown-menu dropdown-menu-left" aria-labelledby="appsMenu">
         <a class="dropdown-item" href="{% url 'boards:boards_home' %}"><i class="fas fa-clipboard-list"></i> Boards</a>
         <a class="dropdown-item" href="{% url 'posts:all_posts' %}"><i class="fa fa-camera" aria-hidden="true"></i> Insta Posts</a>
-        <a class="dropdown-item" href="{% url 'itrac:issues_assigned_to_me' %}"><i class="fas fa-clipboard-check"></i> Issue Tracker</a>
+        <a class="dropdown-item" href="{% url 'itrac:my_in_progress_issues' %}"><i class="fas fa-clipboard-check"></i> Issue Tracker</a>
         <a class="dropdown-item" href="{% url 'catalog:index' %}"><i class="fas fa-book-reader"></i> Mini Library</a>
         <a class="dropdown-item" href="{% url 'polls:question' %}"><i class='fas fa-poll-h'></i> Polls</a>
         <a class="dropdown-item" href="{% url 'scan_n_pay:scan_n_pay' %}">
@@ -35,7 +35,7 @@
       </div>
     </li>
   </ul>
-  <a class="navbar-brand" href="{% url 'itrac:issues_assigned_to_me' %}">
+  <a class="navbar-brand" href="{% url 'itrac:my_in_progress_issues' %}">
     <img src="{% static 'img/winter-logo-sm-blue.png' %}" class="d-inline-block align-middle winter-sm-logo" alt="">
     Issue Tracker
   </a>
@@ -44,18 +44,37 @@
   </button>
   <ul class="navbar-nav ml-auto">
     <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" id="projectsMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-project-diagram"></i> Projects
+      </a>
+      <div class="dropdown-menu dropdown-menu-left" aria-labelledby="projectsMenu">
+        <div class="text-muted ml-1">CURRENT:</div>
+        <a class="dropdown-item" href="{% url 'itrac:filtered_issues_open' %}">{{ request.session.current_project.title }}</a>
+        <div class="dropdown-divider"></div>
+        <div class="text-muted ml-1">RECENT:</div>
+        <a class="dropdown-item" href="#">Recent #1</a>
+        <a class="dropdown-item" href="#">Recent #2</a>
+        <a class="dropdown-item" href="#">Recent #3</a>
+        <a class="dropdown-item" href="#">Recent #4</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="{% url 'itrac:project_list' %}"><i class="fas fa-layer-group"></i> View all projects</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="{% url 'itrac:tag_list' %}"><i class="fas fa-tags"></i> View all tags</a>          
+      </div>
+    </li>
+    <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle" href="#" id="issuesMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fas fa-list-alt"></i> Issues
       </a>
       <div class="dropdown-menu dropdown-menu-left" aria-labelledby="issuesMenu">
-        <a class="dropdown-item" href="{% url 'itrac:issues_assigned_to_me' %}"><i class="fa fa-list" aria-hidden="true"></i> My Open Issues</a>
+        <a class="dropdown-item" href="{% url 'itrac:my_in_progress_issues' %}"><i class="fa fa-list" aria-hidden="true"></i> My in progress issues</a>
         <a class="dropdown-item" href="{% url 'itrac:issues_reported_by_me' %}"><i class="fa fa-list-alt" aria-hidden="true"></i> Reported by me</a>
-        <a class="dropdown-item" href="{% url 'itrac:my_saved_issues' %}"><i class="fa fa-star" aria-hidden="true"></i> My Favorite Issues</a>
+        <a class="dropdown-item" href="{% url 'itrac:my_saved_issues' %}"><i class="fa fa-star" aria-hidden="true"></i> My favorite Issues</a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="{% url 'itrac:filtered_issues_open' %}">All Open issues</a>
-        <a class="dropdown-item" href="{% url 'itrac:filtered_issues_all' %}">All issues</a>
+        <a class="dropdown-item" href="{% url 'itrac:search' %}"><i class="fa fa-filter" aria-hidden="true"></i> Search/filter issues</a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="{% url 'itrac:search' %}"><i class="fa fa-filter" aria-hidden="true"></i> Filter Issues</a>
+        <a class="dropdown-item" href="{% url 'itrac:filtered_issues_open' %}"><i class="far fa-folder-open"></i> All open issues</a>
+        <a class="dropdown-item" href="{% url 'itrac:filtered_issues_all' %}"><i class="far fa-list-alt"></i> All issues</a>
       </div>
     </li>
     <li class="nav-item dropdown">
@@ -69,41 +88,42 @@
       </div>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="{% url 'itrac:new_issue' %}"><i class="fa fa-plus" aria-hidden="true"></i> Add New Issue</a>
+      <a class="nav-link btn btn-sm btn-outline-secondary" href="{% url 'itrac:new_issue' %}">
+        <i class="fa fa-plus" aria-hidden="true"></i> New Issue
+      </a>
     </li>
   </ul>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent"></div>
-    <form class="form-inline my-2 my-lg-0" action="{% url 'core:search' %}" method='GET'>
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-light my-2 my-sm-0" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+  <div style="border: 2px solid gray; padding:6px;">
+    <i class="fas fa-project-diagram"></i> Current:  
+    <a class="" href="{% url 'itrac:filtered_issues_open' %}">{{ request.session.current_project.title }}</a>
+  </div>
+  <div class="collapse navbar-collapse" id="mainMenu">
+    {% if user.is_authenticated %}
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class='h5 text-white'>{{ user.username }} <i class="fa fa-user" aria-hidden="true"></i></span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
+          <a class="dropdown-item" href="{% url 'accounts:my_account' %}">My account</a>
+          <a class="dropdown-item" href="{% url 'accounts:password_change' %}">Change password</a>
+          <div class="dropdown-divider"></div>
+          {% if user.is_staff %}
+          <a class="dropdown-item" href="/admin/">Manage site</a>
+          <div class="dropdown-divider"></div>
+          {% endif %}
+          <a class="dropdown-item" href="{% url 'accounts:logout' %}">Log out</a>
+        </div>
+      </li>
+    </ul>
+    {% else %}
+    <form class="form-inline ml-auto">
+      <a href="{% url 'accounts:login' %}" class="btn btn-primary ml-2 text-white">Log in</a>
+      <a href="{% url 'accounts:signup' %}" class="btn btn-primary ml-2 text-white">Sign up</a>
     </form>
-    <div class="collapse navbar-collapse" id="mainMenu">
-      {% if user.is_authenticated %}
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class='h5 text-white'><i class="fa fa-user" aria-hidden="true"></i> {{ user.username }}</span>
-          </a>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-            <a class="dropdown-item" href="{% url 'accounts:my_account' %}">My account</a>
-            <a class="dropdown-item" href="{% url 'accounts:password_change' %}">Change password</a>
-            <div class="dropdown-divider"></div>
-            {% if user.is_staff %}
-            <a class="dropdown-item" href="/admin/">Manage site</a>
-            <div class="dropdown-divider"></div>
-            {% endif %}
-            <a class="dropdown-item" href="{% url 'accounts:logout' %}">Log out</a>
-          </div>
-        </li>
-      </ul>
-      {% else %}
-      <form class="form-inline ml-auto">
-        <a href="{% url 'accounts:login' %}" class="btn btn-primary ml-2 text-white">Log in</a>
-        <a href="{% url 'accounts:signup' %}" class="btn btn-primary ml-2 text-white">Sign up</a>
-      </form>
-      {% endif %}
-    </div>
+    {% endif %}
   </div>
 </nav>
 {% endblock %}

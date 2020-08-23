@@ -1,0 +1,37 @@
+{% extends 'itrac/base_itrac.html'%}
+{% load static %}
+{% block subcontent %}
+  <h1 class="page-header">Tags</h1>
+  <div class="d-flex justify-content-between mt-3">
+    <input type="text" placeholder="Search tags" id="tagInput">
+    <button type="button" class="btn btn-primary js-create-tag" data-url="{% url 'itrac:tag_create' %}">
+      <i class="fa fa-plus-circle" aria-hidden="true"></i> New tag
+    </button>
+  </div>
+  <table class="table table-striped mt-1" id="tag-table">
+    <thead>
+      <tr>
+        <th>Tag Name</th>
+        <th>Active</th>
+        <th>Number of tagged issues</th>
+        <th>Created date</th>
+        <th>Created by</th>
+        <th>Updated date</th>
+        <th>Updated by</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% include 'itrac/tag/partial_tag_list.html' %}
+    </tbody>
+  </table>
+  <!-- THE MODAL WE WILL BE USING -->
+  <div class="modal fade" id="modal-tag">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block subjavascript %}
+<script src="{% static 'itrac/js/tag.js' %}"></script>
+{% endblock %}
