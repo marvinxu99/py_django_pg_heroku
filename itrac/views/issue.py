@@ -193,7 +193,6 @@ def issue_detail_partial(request, pk):
     comments = Comment.objects.filter(issue=pk).order_by('created_date')
 
     user = request.user
-    issue = Issue.objects.get(pk=pk)
     try:
         savedissue = SavedIssue.objects.get(user=user, issue=issue)
         favourite = True
