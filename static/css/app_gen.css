@@ -15,7 +15,8 @@ body {
     font-size: 1em;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     color: white;
-    padding: 8px 5px 8px 5px;
+    padding: 8px 0px 8px 0px;
+    margin: 0px 0px 0px 0px;
 }
 
 .winter-logo {
@@ -29,6 +30,15 @@ body {
   transform: rotate(20deg);
 }
 
+.winter-logo2 {
+  width: 64px; 
+	height: 64px; 
+}
+.winter-logo2:hover {
+  transition: 1s;
+  transform: rotate(20deg);
+}
+
 .winter-sm-logo {
   width: 32px; 
   height: 32px; 
@@ -36,4 +46,11 @@ body {
 }
 .winter-sm-logo:hover {
   transform: rotate(-20deg);
+}
+
+button:not(:disabled),
+[type="button"]:not(:disabled),
+[type="reset"]:not(:disabled),
+[type="submit"]:not(:disabled) {
+  cursor: pointer;
 }
