@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'budget.apps.BudgetConfig',
     'scan_n_pay.apps.ScannPayConfig',
     'books.apps.BooksConfig',
+    'shop.apps.ShopConfig',
 
     'widget_tweaks',
 ]
@@ -130,7 +131,7 @@ DATABASES = {
 
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'winn_prod_2',
+        'NAME': 'winn_prod_3',
         'USER': 'winter',
         'PASSWORD': 'winter',
         'HOST': 'localhost',

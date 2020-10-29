@@ -2,7 +2,7 @@ import uuid
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
-from ..constants import ACTIVE_STATUS, UOM_TEMP, UOM_SHELF_LIFE, ITEM_TYPE
+from ...constants import ACTIVE_STATUS, UOM_TEMP, UOM_SHELF_LIFE, ITEM_TYPE
 
 class Item(models.Model):
     """ Parent table for all items
@@ -11,7 +11,7 @@ class Item(models.Model):
     item_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     active_ind = models.BooleanField("Active", default=True)
-    active_status_cd = models.CharField(max_length=2, 
+    active_status_cd = models.CharField("Active Status", max_length=2, 
                                         choices=ACTIVE_STATUS.choices, 
                                         default=ACTIVE_STATUS.ACTIVE
                                         )
