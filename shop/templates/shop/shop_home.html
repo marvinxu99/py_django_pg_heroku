@@ -1,17 +1,44 @@
 {% extends 'shop/base_shop.html'%}
+{% load static %}
 {% block content %}
-<h3>Products</h3>
-
-    {% for product in products %}
-    <li  class="list-group-item js_issue_item">
-       
-        {{ product.display }} - {{product.price}}
-        <p><img src="{{ product.product_img_url }}" /></p>
-    </li>
-    {% empty %}
-        Not found.
-    {% endfor %}
-
-
+<h3>{{ page_title|title }}</h3>
+<div class="d-flex flex-wrap">
+  {% for product in products %}
+    <div class="collection-item">
+      <img class="image" src="{{ product.product_img_url }}" />
+      <div class="collection-footer">
+        <span class="name">{{ product.display }}</span>
+        <span class="price">${{ product.price }}</span>
+      </div>
+      <button class="custom-button js_add_to_cart" action-url="{% url 'shop:cart_add_item' product.id %}">ADD TO CART</button>
+    </div>    
+  {% empty %}
+    Not found.
+  {% endfor %}
+</div>
 {% endblock %}
+
+{% block js_shop %}
+<script>
+  
+  $('.js_add_to_cart').click(function(event){
+    const btn = $(this);
+    const action_url = btn.attr('action-url')
+    const csrftoken = getCookie('csrftoken');
+
+    $.ajax({
+      type: "POST",
+      url: action_url,
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function (data) {
+        if (data.status === "S") {
+          $('#cart-icon').html(data.cart_count);
+        }
+      }
+    });
+  });
+
+</script>
+{% endblock %}
+
 
