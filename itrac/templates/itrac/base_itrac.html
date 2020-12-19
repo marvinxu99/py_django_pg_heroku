@@ -17,7 +17,7 @@
     {% endblock head_js %}
 {% endblock %}
 {% block topnav %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
   <ul class="navbar-nav ml-auto">
     <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle" href="#" id="appsMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -29,9 +29,11 @@
         <a class="dropdown-item" href="{% url 'posts:all_posts' %}"><i class="fa fa-camera" aria-hidden="true"></i> Insta Posts</a>
         <a class="dropdown-item" href="{% url 'catalog:index' %}"><i class="fas fa-book-reader"></i> Mini Library</a>
         <a class="dropdown-item" href="{% url 'polls:question' %}"><i class='fas fa-poll-h'></i> Polls</a>
+        <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="{% url 'scan_n_pay:scan_n_pay' %}">
           <img src="https://img.icons8.com/wired/64/000000/barcode-scanner-2.png" width=16 height=16> Scan & Pay
         </a>
+        <a class="dropdown-item" href="{% url 'shop:shop_home' %}"><i class="fas fa-shopping-cart"></i> Online Shop</a>
       </div>
     </li>
   </ul>
@@ -120,9 +122,6 @@
           <a class="dropdown-item" href="{% url 'accounts:logout' %}">Log out</a>
         </div>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#"><i class="fas fa-shopping-cart"></i> Cart(<span id="cart-icon">0</span>)</a>
-      </li>    
     </ul>
     {% else %}
     <form class="form-inline ml-auto">
