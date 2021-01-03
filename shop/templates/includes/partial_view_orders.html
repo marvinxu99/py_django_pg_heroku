@@ -1,3 +1,4 @@
+{% load i18n %}
 {% for order in orders %}
 <div class="d-flex mt-3">
   <div class="js-collapse-toggle" data-toggle="collapse" href="#collapse_order{{order.order_id}}">
@@ -8,17 +9,17 @@
     {% endif %}   
   </div>
   <div>
-    <div class="text-primary js-single-order" orderid="{{ order.order_id }}"> {{ order }}</div>
+    <div class="text-primary js-view-order" orderid="{{ order.order_id }}"> {{ order }}</div>
   </div>
 </div>
 <div class="collapse js-collapse-orders ml-3" id="collapse_order{{order.order_id}}">
   <div class='order-header'>
-    <div class='header-block'><span>Product</span></div>
-    <div class='header-block'><span>Description</span></div>
-    <div class='header-block'><span>Price</span></div>
-    <div class='header-block'><span>Quantity</span></div>
-    <div class='header-block'><span>Subtotal</span></div>
-    <div class='header-block'><span>Remark</span></div>
+    <div class='header-block'><span>{% translate "Product" %}</span></div>
+    <div class='header-block'><span>{% translate "Description" %}</span></div>
+    <div class='header-block'><span>{% translate "Price" %}</span></div>
+    <div class='header-block'><span>{% translate "Quantity" %}</span></div>
+    <div class='header-block'><span>{% translate "Subtotal" %}</span></div>
+    <div class='header-block'><span>{% translate "Remark" %}</span></div>
   </div>
   <div class='order-items'>
     {% for item in order.order_items.all %}
@@ -36,6 +37,8 @@
     {% endfor %}
   </div>  
 </div>
+{% empty %}
+<p>You haven't ordered anything yet.</p>
 {% endfor %}
 
 <script>

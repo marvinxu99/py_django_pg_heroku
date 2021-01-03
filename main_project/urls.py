@@ -46,10 +46,12 @@ urlpatterns = [
     
     path('payments/', include('payments.urls')),
     path('budget/', include('budget.urls')),
-    path('scan_n_pay/', include('scan_n_pay.urls')),   
-    path('books/', include('books.urls')), 
-    
+    path('scan_n_pay/', include('scan_n_pay.urls')),
+    path('books/', include('books.urls')),
+
     path('shop/', include('shop.urls')),
+
+    path('i18n/', include('django.conf.urls.i18n')),
 
 ]
 

@@ -1,16 +1,25 @@
 {% extends 'shop/base_shop.html' %}
-{% block title %}Successful Payment {% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Successful Payment" %}{% endblock %}
 {% block content %}
-<h3>{{ page_title }}</h3>
-<p>You have sucessfully paid the following items:</p>
+<div class="d-flex justify-content-between w-75">
+  <div>
+    <h3>{{ page_title }}</h3>
+    <p>{% translate "You have sucessfully paid the following items" %}:</p>
+  </div>
+  <div>
+    <button>{% translate "Email receipt" %}</button>
+    <button>{% translate "Download receipt" %}</button>
+  </div>
+</div>
 <div class='order-page'>
   <div class='order-header'>
-    <div class='header-block'><span>Product</span></div>
-    <div class='header-block'><span>Description</span></div>
-    <div class='header-block'><span>Price</span></div>
-    <div class='header-block'><span>Quantity</span></div>
-    <div class='header-block'><span>Subtotal</span></div>
-    <div class='header-block'><span>Remark</span></div>
+    <div class='header-block'><span>{% translate "Product" %}</span></div>
+    <div class='header-block'><span>{% translate "Description" %}</span></div>
+    <div class='header-block'><span>{% translate "Price" %}</span></div>
+    <div class='header-block'><span>{% translate "Quantity" %}</span></div>
+    <div class='header-block'><span>{% translate "Subtotal" %}</span></div>
+    <div class='header-block'><span>{% translate "Remark" %}</span></div>
   </div>
   <div class='order-items'>
     {% for item in items %}
@@ -24,9 +33,9 @@
         <div class='subtotal'>${{ item.price|floatformat:2  }}</div>
       </div>
     {% empty %}
-      <div>**no orders.**</div>
+      <div>**{% translate "no orders" %}.**</div>
     {% endfor %}
   </div>
-  <div class='total'>TOTAL: ${{ order_total|floatformat:2 }}</div>
+  <div class='total'>{% translate "TOTAL" %}: ${{ order_total|floatformat:2 }}</div>
 
 {% endblock %}

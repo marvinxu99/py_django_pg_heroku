@@ -2,11 +2,9 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from django.contrib.auth.models import AnonymousUser
-from django.db.models import Sum
-from django.db.models import Q
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404
-
+from django.db.models import Sum, Q
+from django.shortcuts import render, get_object_or_404
+from django.utils.translation import gettext_lazy as _
 
 from shop.models import Cart, CartItem, Product
 from core.models import CodeValue
@@ -167,7 +165,7 @@ def cart_view_items(request):
     context = {
         'items': items,
         'categories': categories,
-        'page_title': "Shopping Cart",
+        'page_title': _("Shopping Cart"),
         'cart_total': cart_total,
     }
 
@@ -186,7 +184,7 @@ def cart_remove_all_items(request):
     context = {
         'items': None,
         'categories': categories,
-        'page_title': "Shopping Cart",
+        'page_title': _("Shopping Cart"),
         'cart_total': 0,
     }
 

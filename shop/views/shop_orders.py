@@ -5,6 +5,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.db.models import Sum
 from django.shortcuts import render
 from django.template.loader import render_to_string
+from django.utils.translation import gettext_lazy as _
 
 from shop.models import Product, Payment, Order, OrderItem
 from core.models import CodeValue
@@ -19,13 +20,13 @@ def view_orders(request):
 
     # Get the last order
     order = Order.objects.filter(owner=request.user).order_by('-create_dt_tm').first()
-    orders = [order]
+    orders = [order] if order else None
 
     context = {
         'orders': orders,
-        'page_title': "Your orders",
+        'page_title': _("Your orders"),
         'categories': categories,
-        'filter_name': 'My Last Order'
+        'filter_name': _('My Last Order')
     }
 
     return render(request, "shop/shop_orders.html", context)
@@ -42,14 +43,14 @@ def view_orders_filter(request):
     orders_all = Order.objects.filter(owner=request.user).order_by('-create_dt_tm')
 
     if filter == 'my-last-order':
-        orders = [ orders_all[0] ]
-        filter_name = 'My Last Order'
+        orders = [ orders_all[0] ] if orders_all else None
+        filter_name = _('My Last Order')
     elif filter == 'my-last-3-orders':
         orders = orders_all[:3]
-        filter_name = 'My Last 3 Order'
+        filter_name = _('My Last 3 Orders')
     else:
         orders = orders_all
-        filter_name = 'All My Orders'
+        filter_name = _('All My Orders')
 
     data['html_view_orders'] = render_to_string(
                 'includes/partial_view_orders.html', 
@@ -68,7 +69,7 @@ def view_orders_orderid(request, orderid):
     order = Order.objects.get(order_id=orderid)
 
     orders = [order, ]
-    filter_name = "Order placed on " + order.create_dt_tm.strftime("%d-%b-%Y")
+    filter_name = _("Order placed on") + " " + order.create_dt_tm.strftime("%d-%b-%Y")
 
     data['html_view_orders'] = render_to_string(
                 'includes/partial_view_orders.html', 
